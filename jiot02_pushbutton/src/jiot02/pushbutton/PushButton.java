@@ -6,8 +6,6 @@
 package jiot02.pushbutton;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jdk.dio.DeviceManager;
 import jdk.dio.gpio.GPIOPin;
 
@@ -38,12 +36,13 @@ public class PushButton {
     
     public void run() throws IOException, InterruptedException {
         boolean value = false;
-        while (true) {
-//            ledPin.setValue(!(btnPin1.getValue()));
+        boolean exit = false;
+        while (!exit) {
             value = btnPin1.getValue();
             ledPin.setValue(value);
             System.out.println("LED value = " + value);
             Thread.sleep(250);
+            exit = !(btnPin2.getValue());
         }
     }
     
@@ -55,6 +54,7 @@ public class PushButton {
         try {
             btnObj = new PushButton();
             btnObj.run();
+            btnObj.close();
         } catch (IOException | InterruptedException ex) {
 //            Logger.getLogger(PushButton.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
