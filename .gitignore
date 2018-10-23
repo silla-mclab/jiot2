@@ -24,3 +24,6 @@ hs_err_pid*
 /jiot01_blinking/nbproject/private/
 /jiot01_blinking/dist/
 /jiot01_blinking/build/
+/jiot02_pushbutton/nbproject/private/
+/jiot02_pushbutton/build/
+/jiot02_pushbutton/dist/
