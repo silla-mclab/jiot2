@@ -35,3 +35,6 @@ hs_err_pid*
 /jiot03_buttonevent/nbproject/private/
 /jiot03_buttonevent/build/
 /jiot03_buttonevent/dist/
+/jiot04_led_dimmer/nbproject/private/
+/jiot04_led_dimmer/dist/
+/jiot04_led_dimmer/build/
