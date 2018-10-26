@@ -21,12 +21,12 @@ public class PushButtonEventEx implements Runnable {
     public static final String LED_PIN = "GPIO17";
     public static final String BTN1_PIN = "GPIO23";
     public static final String BTN2_PIN = "GPIO24";
-    public static final String PI_PIN = "GPIO25";
+    public static final String PIR_PIN = "GPIO25";
 
     private GPIOPin ledPin = null;
     private GPIOPin btn1Pin = null;
     private GPIOPin btn2Pin = null;
-    private GPIOPin piPin = null;
+    private GPIOPin pirPin = null;
     
     private volatile boolean togglingStop = true, exit = false;
     
@@ -34,7 +34,7 @@ public class PushButtonEventEx implements Runnable {
         ledPin = DeviceManager.open(LED_PIN, GPIOPin.class);
         btn1Pin = DeviceManager.open(BTN1_PIN, GPIOPin.class);
         btn2Pin = DeviceManager.open(BTN2_PIN, GPIOPin.class);
-        piPin = DeviceManager.open(PI_PIN, GPIOPin.class);
+        pirPin = DeviceManager.open(PIR_PIN, GPIOPin.class);
         
         btn1Pin.setInputListener(new PinListener() {
             @Override
@@ -54,12 +54,7 @@ public class PushButtonEventEx implements Runnable {
             }
         });
         
-        piPin.setInputListener(new PinListener() {
-            @Override
-            public void valueChanged(PinEvent pe) {
-                togglingStop = !pe.getValue();
-            }
-        });
+        pirPin.setInputListener(new PIRListener());
         
         System.out.println("LED & Button devices successfully opened...");
     }
@@ -68,7 +63,7 @@ public class PushButtonEventEx implements Runnable {
         ledPin.close();
         btn1Pin.close();
         btn2Pin.close();
-        piPin.close();
+        pirPin.close();
         System.out.println("All devices successfully closed...");
     }
     
@@ -93,6 +88,13 @@ public class PushButtonEventEx implements Runnable {
         } catch (IOException ex) {
             Logger.getLogger(PushButtonEventEx.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    class PIRListener implements PinListener {
+        @Override
+        public void valueChanged(PinEvent pe) {
+                togglingStop = !pe.getValue();
+        }        
     }
     
     /**
