@@ -38,3 +38,6 @@ hs_err_pid*
 /jiot04_led_dimmer/nbproject/private/
 /jiot04_led_dimmer/dist/
 /jiot04_led_dimmer/build/
+/jiot04_PCF8591BB_test/nbproject/private/
+/jiot04_PCF8591BB_test/dist/
+/jiot04_PCF8591BB_test/build/
