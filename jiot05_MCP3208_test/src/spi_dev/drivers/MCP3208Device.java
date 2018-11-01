@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import jdk.dio.Device;
 import spi_dev.MCP3208;
-import spi_dev.SPIRpi;
+import spi_dev.SPIRPi;
 
 /**
  *
  * @author yjkim
  */
-public class MCP3208Device extends SPIRpi {
+public class MCP3208Device extends SPIRPi {
 
     /**
      *

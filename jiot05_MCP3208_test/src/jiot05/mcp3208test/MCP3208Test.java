@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import spi_dev.SPIRpi;
+import spi_dev.SPIRPi;
 import spi_dev.drivers.MCP3208Device;
 
 /**
@@ -24,7 +24,7 @@ public class MCP3208Test implements Runnable {
     private MCP3208Device adDev = null; 
     
     public MCP3208Test() throws IOException {
-        adDev = new MCP3208Device(SPIRpi.CE1);
+        adDev = new MCP3208Device(SPIRPi.CE1);
     }
 
     @Override

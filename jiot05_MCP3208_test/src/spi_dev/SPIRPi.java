@@ -10,7 +10,7 @@ import jdk.dio.spibus.SPIDeviceConfig;
  * Base definitions for create a device and its config
  *
  */
-public class SPIRpi {
+public class SPIRPi {
 
     private SPIDeviceConfig config;
 
@@ -29,7 +29,7 @@ public class SPIRpi {
      * @param bitOrder
      * @throws IOException
      */
-    public SPIRpi(int address, int bitOrder) throws IOException {
+    public SPIRPi(int address, int bitOrder) throws IOException {
 
         //depredicated:
         //public SPIDeviceConfig(int controllerNumber, int address, int csActive, int clockFrequency, int clockMode, int wordLength, int bitOrdering) {
