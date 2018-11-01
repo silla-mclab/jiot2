@@ -54,9 +54,9 @@ public class MCP3208Polling implements Runnable {
         out.flip();
         
         try {
-            ssPin.setValue(false);      // CS - Active Low
+//            ssPin.setValue(false);      // CS - Active Low
             spiDev.writeAndRead(out, in);
-            ssPin.setValue(true);
+//            ssPin.setValue(true);
         } catch (IOException ex) {
 //            Logger.getLogger(MCP3208.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);

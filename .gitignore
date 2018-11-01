@@ -47,3 +47,6 @@ hs_err_pid*
 /jiot05_MCP3208_polling/nbproject/private/
 /jiot05_MCP3208_polling/build/
 /jiot05_MCP3208_polling/dist/
+/jiot05_MCP3208_test/nbproject/private/
+/jiot05_MCP3208_test/build/
+/jiot05_MCP3208_test/dist/
