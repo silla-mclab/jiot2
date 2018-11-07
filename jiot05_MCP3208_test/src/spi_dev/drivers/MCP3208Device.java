@@ -23,7 +23,7 @@ public class MCP3208Device extends SPIRPi {
      * @throws IOException
      */
     public MCP3208Device(int address) throws IOException {
-        super(address, Device.BIG_ENDIAN);
+        super(address, Device.BIG_ENDIAN);  // (SPI address, bit-ordering)
     }
 
     /**
@@ -42,11 +42,12 @@ public class MCP3208Device extends SPIRPi {
         sndBuf.put((byte)(channel & 0xff));
         sndBuf.flip();
         
-//        device.begin();       // deprecated
-        device.writeAndRead(sndBuf, rcvBuf);
-//        device.end();         // deprecated
+        writeAndRead(sndBuf, rcvBuf);
 
-        return (int)((rcvBuf.get(1) & 0x0f) << 8) + (int)rcvBuf.get(2);   // return 12-bit digital value
+        int highByte = (int)(rcvBuf.get(1) & 0x0f);
+        int lowByte = (int)(rcvBuf.get(2) & 0xff);
+
+        return (highByte << 8) | lowByte;   // return 12-bit digital value
     }
 
     /**
