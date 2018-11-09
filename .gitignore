@@ -53,3 +53,6 @@ hs_err_pid*
 /jiot06-UARTComm-test/nbproject/private/
 /jiot06-UARTComm-test/dist/
 /jiot06-UARTComm-test/build/
+/jiot07-IotCliApp/nbproject/private/
+/jiot07-IotCliApp/build/
+/jiot07-IotCliApp/dist/

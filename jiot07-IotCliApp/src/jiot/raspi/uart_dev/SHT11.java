@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package uart_dev;
+package jiot.raspi.uart_dev;
 
 import java.io.IOException;
 
@@ -29,8 +29,8 @@ public enum SHT11 {
         this.cmd = cmd;
     }
     
-    public void send(UARTRPi uart) throws IOException {
-        uart.send(this.cmd);
+    public void send(UARTRPi uart) throws IOException, InterruptedException {
+        uart.sendSync(this.cmd);
     }
     
 }
