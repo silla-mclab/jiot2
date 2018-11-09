@@ -50,3 +50,6 @@ hs_err_pid*
 /jiot05_MCP3208_test/nbproject/private/
 /jiot05_MCP3208_test/build/
 /jiot05_MCP3208_test/dist/
+/jiot06-UARTComm-test/nbproject/private/
+/jiot06-UARTComm-test/dist/
+/jiot06-UARTComm-test/build/
