@@ -20,27 +20,31 @@ import uart_dev.UARTRPi;
  *
  * @author yjkim
  */
-public class SHT11Device extends UARTRPi {
+public class SHT11Device {
+    public static final String DEV_NAME = "SHT11";
+    
+    private UARTRPi uart = null;
     private double temperature = 0;
     private double humidity = 0;
     private boolean active = false;
     
-    private final Semaphore stateUpdated = new Semaphore(0, true);
-    
-    public SHT11Device(String controllerName) throws IOException {
-        super(controllerName);
-        setEventListener(UARTEvent.INPUT_DATA_AVAILABLE, new SHT11EventListener());
+    public SHT11Device() throws IOException {
+        uart = UARTRPi.getInstance();
+        uart.addDataListener(DEV_NAME, new SHT11EventListener());
     }
     
-    private boolean waitForUpdate() throws InterruptedException {
-        return stateUpdated.tryAcquire(2, TimeUnit.SECONDS);
+    public void close() {
+        try {
+            uart.removeDataListener(DEV_NAME);
+            uart.close();
+        } catch (IOException ex) {
+            Logger.getLogger(SHT11Device.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
+    
     public boolean isActive() {
         try {
-            SHT11.CHK_ACK.send(this);
-            if (!waitForUpdate())   // timeout
-                active = false;
+            SHT11.CHK_ACK.send(uart);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(SHT11Device.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -49,8 +53,7 @@ public class SHT11Device extends UARTRPi {
     
     public double getTemperature() {
         try {
-            SHT11.GET_TMP.send(this);
-            waitForUpdate();
+            SHT11.GET_TMP.send(uart);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(SHT11Device.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -59,56 +62,32 @@ public class SHT11Device extends UARTRPi {
     
     public double getHumidity() {
         try {
-            SHT11.GET_HMD.send(this);
-            waitForUpdate();
+            SHT11.GET_HMD.send(uart);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(SHT11Device.class.getName()).log(Level.SEVERE, null, ex);
         }
         return humidity;
     }
     
-    class SHT11EventListener implements UARTEventListener {
+    class SHT11EventListener implements UARTRPi.UARTDataListener {
 
         @Override
-        public void eventDispatched(UARTEvent uarte) {
-            if (uarte.getID() == UARTEvent.INPUT_DATA_AVAILABLE) {
-                ByteBuffer buffer = ByteBuffer.allocateDirect(100);
-                try {
-                    int length = readData(buffer);
-                    byte[] bytes = new byte[buffer.position()];
-                    buffer.flip();
-                    buffer.get(bytes);
-                    String response = new String(bytes);
-                    System.out.print(response);
-                    String[] tokens = response.split("=|\\n");
-                    boolean release = false;
-                    switch(tokens[0].charAt(0)) {
-                        case 'H':
-                            humidity = Double.parseDouble(tokens[1]);
-                            release = true;
-                            break;
-                        case 'T':
-                            temperature = Double.parseDouble(tokens[1]);
-                            release = true;
-                            break;
-                        case 'O':
-                            if (tokens[0].equals("OK")) {
-                                active = true;
-                                release = true;
-                            }
-                        default:
-                            break;
-                    }
-                    if (release) {
-                        stateUpdated.release();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+        public boolean processReceivedData(String data) {
+            boolean processed = false;
+            String[] tokens = data.split("=|\\n");
+            if (tokens[0].equals("H")) {
+                humidity = Double.parseDouble(tokens[1]);
+                processed = true;
             }
-            else {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            else if (tokens[0].equals("T")) {
+                temperature = Double.parseDouble(tokens[1]);
+                processed = true;
             }
+            else if (tokens[0].equals("OK")) {
+                active = true;
+                processed = true;
+            }
+            return processed;
         }
         
     }

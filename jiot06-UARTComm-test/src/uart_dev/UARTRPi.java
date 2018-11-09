@@ -7,9 +7,15 @@ package uart_dev;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicReference;
 import jdk.dio.DeviceManager;
 import jdk.dio.uart.UART;
 import jdk.dio.uart.UARTConfig;
+import jdk.dio.uart.UARTEvent;
 import jdk.dio.uart.UARTEventListener;
 
 /**
@@ -17,9 +23,41 @@ import jdk.dio.uart.UARTEventListener;
  * @author yjkim
  */
 public class UARTRPi {
-    public UART device = null;
+    private static AtomicReference<UARTRPi> instance
+            = new AtomicReference<UARTRPi>();
+
+    public static UARTRPi getInstance() throws IOException {
+        if (instance.get() == null) {
+            instance.set(new UARTRPi(null));
+         }
+        return instance.get();
+    }
+
+    public static UARTRPi getInstance(String controllerName) throws IOException {
+        if (instance.get() == null) {
+            instance.set(new UARTRPi(controllerName));
+         }
+        return instance.get();
+    }
+
+    public interface UARTDataListener {
+        boolean processReceivedData(String data);
+    }
+
+    private final Map<String, UARTDataListener> dataProcList = new HashMap<String, UARTDataListener>();
     
-    public UARTRPi(String controllerName) throws IOException {
+    public void addDataListener(String devName, UARTDataListener listener) {
+        dataProcList.put(devName, listener);
+    }
+    
+    public void removeDataListener(String devName) {
+        dataProcList.remove(devName);
+    }
+    
+    private UART port = null;
+    private final Semaphore dataReceived = new Semaphore(0, true);
+    
+    private UARTRPi(String controllerName) throws IOException {
         if (controllerName == null)
             controllerName = "ttyAMA0";
         
@@ -33,37 +71,78 @@ public class UARTRPi {
            .setFlowControlMode(UARTConfig.FLOWCONTROL_NONE)
            .build();        
         
-        device = (UART)DeviceManager.open(config);  
+        port = (UART)DeviceManager.open(config);
+        port.setEventListener(UARTEvent.INPUT_DATA_AVAILABLE, new UARTEventListener() {
+            @Override
+            public void eventDispatched(UARTEvent uarte) {
+                if (uarte.getID() == UARTEvent.INPUT_DATA_AVAILABLE) {
+                    ByteBuffer buffer = ByteBuffer.allocateDirect(100);
+                    try {
+                        int length = port.read(buffer);
+//                        byte[] bytes = new byte[buffer.position()];
+                        byte[] bytes = new byte[length];
+                        buffer.flip();
+                        buffer.get(bytes);
+                        String response = new String(bytes);
+//                        System.out.print(response);     // for testing...
+
+                        boolean release = false;
+                        Iterator<String> keys = dataProcList.keySet().iterator();
+                        while(keys.hasNext()) {
+                            release = dataProcList.get(keys.next()).processReceivedData(response);
+                            if (release) break;
+                        }
+
+                        if (release) {
+                            dataReceived.release();
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                else {
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+            }
+        });
     }
     
     public void close() throws IOException {
-        if (device != null)
-            device.close();
+        if (port != null && dataProcList.size() == 0) {
+            port.close();
+            instance.set(null);
+        }
     }
     
-    public void setEventListener(int eventType, UARTEventListener listener) throws IOException {
-        device.setEventListener(eventType, listener);        
+    public UART getPort() {
+        return port;
+    }
+    
+    public void sendSync(String data) throws IOException, InterruptedException {
+        send(data);
+        dataReceived.acquire();
     }
     
     public void send(String data) throws IOException {
         ByteBuffer out = ByteBuffer.allocateDirect(data.length());
         out.put(data.getBytes());
         out.clear();
-        device.write(out);
+        port.write(out);
     }
 
     public void send(byte[] data, int length) throws IOException {
         ByteBuffer out = ByteBuffer.allocateDirect(length);
         out.put(data);
         out.clear();
-        device.write(out);
+        port.write(out);
     }
 
     public void send(ByteBuffer data) throws IOException {
-        device.write(data);
+        port.write(data);
     }
     
     public int readData(ByteBuffer buf) throws IOException {
-        return device.read(buf);
+        return port.read(buf);
     }
+        
 }

@@ -29,8 +29,8 @@ public enum SHT11 {
         this.cmd = cmd;
     }
     
-    public void send(UARTRPi uart) throws IOException, InterruptedException {
-        uart.sendSync(this.cmd);
+    public void send(UARTRPi uart) throws IOException {
+        uart.send(this.cmd);
     }
     
 }

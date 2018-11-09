@@ -18,7 +18,7 @@ public class UARTCommTest {
     private SHT11Device sht11 = null;
     
     public UARTCommTest() throws IOException {
-        sht11 = new SHT11Device(null);
+        sht11 = new SHT11Device();
     }
     
     public void run() throws InterruptedException, IOException {
