@@ -30,11 +30,15 @@ public class AnalogInputPoint extends ControlPoint {
 
     private static final AtomicInteger OPEN_COUNT = new AtomicInteger(0);
     private int channel;
-    private Future pollingFuture;
+    private Future pollingFuture = null;
     
     public AnalogInputPoint(int channel) {
         super();
         this.channel = channel;
+    }
+    
+    public int getChannel() {
+        return channel;
     }
     
     public int read() {
@@ -49,34 +53,42 @@ public class AnalogInputPoint extends ControlPoint {
         return value;
     }
     
-    @Override
-    public void open() {
+    public void open(boolean polling) {
         OPEN_COUNT.incrementAndGet();
 
-        pollingFuture = POLLING.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    int oldValue = presentValue.get();
-                    int newValue = getAdcDevice().analogRead(channel);
-                    presentValue.set(newValue);
-                    if (oldValue != newValue) {
-                        fireChanged();
-                    }					
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+        if (polling) {
+            pollingFuture = POLLING.scheduleWithFixedDelay(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        int oldValue = presentValue.get();
+                        int newValue = getAdcDevice().analogRead(channel);
+                        presentValue.set(newValue);
+                        if (oldValue != newValue) {
+                            fireChanged();
+                        }					
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
-            }
-        }, 0, 1, TimeUnit.SECONDS);
+            }, 0, 1, TimeUnit.SECONDS);
+        }
         
         setName("AI_channel_" + channel);
+    }
+
+    @Override
+    public void open() {
+        this.open(true);
     }
 
     @Override
     public void close() {
         int ref_count = OPEN_COUNT.decrementAndGet();
         if (ref_count > 0) {
-            pollingFuture.cancel(false);
+            if (pollingFuture != null) {
+                pollingFuture.cancel(false);
+            }
         }
         else if (ref_count == 0) {
             getAdcDevice().close();

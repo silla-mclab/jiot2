@@ -41,7 +41,7 @@ public class CLIConsole implements Observer {
         CommandInterpreter interpreter = CommandInterpreter.getInstance();
         
         for (String line = in.readLine();
-                line == null || !line.equals("quit") || !line.equals("exit");
+                line == null || (!line.equals("quit") && !line.equals("exit"));
                 line = in.readLine()) {
             if(line == null)
                 continue;

@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ControlPoint extends Observable {
     public static enum Type {
-            DI, DO, TDO, AI, AO, UART
+            DI, DO, AI, AO, AIE, UART
     };
 
     protected static final ScheduledExecutorService POLLING = 

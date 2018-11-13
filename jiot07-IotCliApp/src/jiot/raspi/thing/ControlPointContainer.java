@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import jiot.raspi.ext_dev.DustSensor;
+import jiot.raspi.ext_dev.VantilationFan;
 
 public class ControlPointContainer {
 
@@ -24,22 +26,34 @@ public class ControlPointContainer {
     }
 	
     private void createControlPoints() {
-        ControlPoint point = new GPIOPinOutputControlPoint(17);
+        ControlPoint point = new GPIOPinOutputControlPoint(17);     // LED1
         controlPoints.put(point.getId(), point);
 
-        point = new GPIOPinControlPoint(18);
-        controlPoints.put(point.getId(), point);
-
-        point = new GPIOPinOutputControlPoint(22);
+        point = new GPIOPinOutputControlPoint(27);      // LED2
         controlPoints.put(point.getId(), point);
         
-        point = new AnalogInputPoint(0);
+        point = new GPIOPinOutputControlPoint(22);      // LED3
+        controlPoints.put(point.getId(), point);
+        
+        point = new VantilationFan(5, 6);               // Valtilation Fan
+        controlPoints.put(point.getId(), point);
+        
+        point = new GPIOPinControlPoint(23);            // Button1
+        controlPoints.put(point.getId(), point);
+        
+        point = new GPIOPinControlPoint(24);            // Button2
+        controlPoints.put(point.getId(), point);
+        
+        point = new GPIOPinControlPoint(25);            // PIR Motion Sensor
         controlPoints.put(point.getId(), point);
 
-        point = new AnalogInputPoint(1);
+        point = new AnalogInputPoint(0);                // CDR sensor
         controlPoints.put(point.getId(), point);
 
-        point = new UARTCommPoint();
+        point = new DustSensor(1, 18);                  // Dust Sensor(Analog#1, GPIO18)
+        controlPoints.put(point.getId(), point);
+
+        point = new UARTCommPoint();                    // SHT11
         controlPoints.put(point.getId(), point);
     }
 

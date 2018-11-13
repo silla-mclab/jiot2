@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import jiot.raspi.thing.CommandExecutable;
 import jiot.raspi.thing.ControlPoint;
 import jiot.raspi.thing.ControlPointContainer;
+import jiot.raspi.thing.ExtendedInput;
 import jiot.raspi.thing.OutputControlPoint;
 
 public class CommandInterpreter {
@@ -95,7 +96,8 @@ public class CommandInterpreter {
                     if (point == null) {
                         return "Cannot find a point(" + pointId + ")";
                     } else {
-                        return String.valueOf(point.getPresentValue());
+                        return String.valueOf((point.getType()==ControlPoint.Type.AIE) ? 
+                                ((ExtendedInput)point).getValue() : point.getPresentValue());
                     }
                 }
              }
