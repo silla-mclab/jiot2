@@ -19,7 +19,7 @@ public class CLIConsole implements Observer {
     private UART uart = null;
     private BufferedReader in;
     private BufferedWriter out;
-    private boolean change_log = false;
+    private boolean change_log = true;
 
     public CLIConsole(UARTConfig config) throws IOException {
         if (config != null) {

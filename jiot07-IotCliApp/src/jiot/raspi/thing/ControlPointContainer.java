@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import jiot.raspi.ext_dev.UARTCommPoint;
 import jiot.raspi.ext_dev.DustSensor;
 import jiot.raspi.ext_dev.VantilationFan;
 
@@ -86,5 +87,31 @@ public class ControlPointContainer {
         if (!cp.isEnabled()) {
             cp.open();
         }        
+    }
+    
+    public enum ControlPoints {
+        LED1(0),
+        LED2(1),
+        LED3(2),
+        FAN(3),
+        BTN1(4),
+        BTN2(5),
+        PIR(6),
+        CDR(7),
+        DUST(8),
+        SHT11(9);
+
+        /**
+         *
+         */
+        private int id;
+
+        private ControlPoints(int id) {
+            this.id = id;
+        }
+        
+        public int getId() {
+            return this.id;
+        }
     }
 }

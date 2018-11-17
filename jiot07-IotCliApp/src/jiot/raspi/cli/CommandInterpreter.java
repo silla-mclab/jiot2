@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import jiot.raspi.thing.CommandExecutable;
 import jiot.raspi.thing.ControlPoint;
 import jiot.raspi.thing.ControlPointContainer;
-import jiot.raspi.thing.ExtendedInput;
 import jiot.raspi.thing.OutputControlPoint;
+import jiot.raspi.ext_dev.CommandExecutable;
+import jiot.raspi.ext_dev.ExtendedInput;
 
 public class CommandInterpreter {
 

@@ -42,6 +42,7 @@ public class IotCliApp {
                 point.addObserver(console);
              }
 
+            console.setChangeLogDisplsy(false);
             console.run();
         } catch (IOException ex) {
             Logger.getLogger(IotCliApp.class.getName()).log(Level.SEVERE, null, ex);

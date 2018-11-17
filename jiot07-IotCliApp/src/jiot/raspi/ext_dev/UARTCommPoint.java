@@ -1,8 +1,9 @@
-package jiot.raspi.thing;
+package jiot.raspi.ext_dev;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jiot.raspi.thing.ControlPoint;
 import jiot.raspi.uart_dev.UARTRPi;
 import jiot.raspi.uart_dev.drivers.SHT11Device;
 

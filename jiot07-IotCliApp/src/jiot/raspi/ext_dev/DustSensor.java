@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import jdk.dio.DeviceManager;
 import jdk.dio.gpio.GPIOPin;
 import jiot.raspi.thing.AnalogInputPoint;
-import jiot.raspi.thing.ExtendedInput;
 
 /**
  *
