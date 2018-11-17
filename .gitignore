@@ -56,3 +56,6 @@ hs_err_pid*
 /jiot07-IotCliApp/nbproject/private/
 /jiot07-IotCliApp/build/
 /jiot07-IotCliApp/dist/
+/jiot-raspi/nbproject/private/
+/jiot-raspi/build/
+/jiot-raspi/dist/
