@@ -14,6 +14,7 @@ import jiot.raspi.thing.OutputControlPoint;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -94,6 +95,22 @@ public class RaspiIotController implements Observer {
             OutputControlPoint ledCP = (OutputControlPoint)cpContainer.getControlPoint(ledCPId);
             ledCP.setPresentValue(2);
             return ("LED #" + ledId + " is turn off.");
+        }
+    }
+    
+    // Reuqest URL : "/getButton?btn=1"
+    @RequestMapping(value="/getButton", method=RequestMethod.GET)
+    @ResponseBody
+    public String getButton(@RequestParam("btn") String btnId) {
+        int btnNum = Integer.parseInt(btnId);
+        if (btnNum < 1 || btnNum > 2) {
+            return "Button ID parameter is wrong. Button id must be from 1 to 2.";
+        }
+        else {
+            int btnCPId = ControlPointContainer.ControlPoints.BTN1.getId() + (btnNum-1);
+            ControlPoint btnCP = cpContainer.getControlPoint(btnCPId);
+            int value = btnCP.getPresentValue();
+            return ("Button #" + btnId + " Input = " + value);
         }
     }
     
