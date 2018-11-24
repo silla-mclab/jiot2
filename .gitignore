@@ -59,3 +59,5 @@ hs_err_pid*
 /jiot-raspi/nbproject/private/
 /jiot-raspi/build/
 /jiot-raspi/dist/
+/SimpleCoAPServer/target/
+/SimpleCoAPClient/target/
