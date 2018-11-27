@@ -59,7 +59,8 @@ public class SimpleCoAPServer {
             
             private CoapResource initialize() {
                 setObservable(true);
-                setObserveType(Type.CON); 
+                setObserveType(Type.CON);
+                getAttributes().setObservable();
                 
                 start();                
                 
