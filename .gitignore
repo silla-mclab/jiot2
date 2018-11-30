@@ -62,3 +62,6 @@ hs_err_pid*
 /SimpleCoAPServer/target/
 /SimpleCoAPClient/target/
 /ControlPointCoAPServer/target/
+/SimpleMqttPublisher/target/
+/SimpleMqttSubscriber/target/
+/MqttEchoReceiver/target/
