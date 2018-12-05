@@ -65,3 +65,5 @@ hs_err_pid*
 /SimpleMqttPublisher/target/
 /SimpleMqttSubscriber/target/
 /MqttEchoReceiver/target/
+/JiotMqttCLIHandler/target/
+/JiotMqttCLIClient/target/
