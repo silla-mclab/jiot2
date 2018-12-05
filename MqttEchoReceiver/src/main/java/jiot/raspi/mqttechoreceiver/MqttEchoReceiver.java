@@ -8,10 +8,9 @@ package jiot.raspi.mqttechoreceiver;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Scanner;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -29,20 +28,21 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
  */
 public class MqttEchoReceiver {
     public static final String TOPIC_PREFIX = "jiot/mqtt/";
-    public static final String TOPIC_ECHO = TOPIC_PREFIX + "echo/#";
+    public static final String TOPIC_ECHO = TOPIC_PREFIX + "+/echo";
     public static final String TOPIC_RESPONSE = TOPIC_PREFIX + "%s/response";
 
     private String uri;
     private String clientId;
     private MqttClient client;
 
-    public MqttEchoReceiver() throws SocketException, MqttException {
+    public MqttEchoReceiver() throws SocketException, MqttException, UnknownHostException {
         uri = System.getProperty("mqtt.server", "tcp://localhost:1883");
         System.out.println("MQTT Broker URI: " + uri);
-//        String ipAddress = getLocalIPAddress();		
-//        System.out.println("Used IP address: " + ipAddress);
-//        clientId = ipAddress.replace('.', '_');
-        clientId = "mqttechoreceiver";
+        String ipAddress = getLocalIPAddress();		
+        System.out.println("Used IP address: " + ipAddress);
+        clientId = "echo" + ipAddress.replace('.', '_');
+//        clientId = "mqttechoreceiver";
+
         String tmpDir = System.getProperty("java.io.tmpdir");
         MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(tmpDir);
 
@@ -69,7 +69,7 @@ public class MqttEchoReceiver {
 
             @Override
             public void messageArrived(String topic, MqttMessage msg) throws Exception {
-                String[] clientInfo = topic.substring(TOPIC_ECHO.length()-1).split("/");                
+                String[] clientInfo = topic.substring(TOPIC_PREFIX.length()).split("/");                
                 JsonObject jsonObj = new JsonObject();
                 jsonObj.addProperty("clientId", clientInfo[0]);
                 jsonObj.addProperty("message", msg.toString());
@@ -91,25 +91,27 @@ public class MqttEchoReceiver {
         client.subscribe(TOPIC_ECHO);
     }
 	
-    public String getLocalIPAddress() throws SocketException {
+    public String getLocalIPAddress() throws SocketException, UnknownHostException {
         String ipAddress = null;
-        Enumeration<NetworkInterface> networkList = NetworkInterface.getNetworkInterfaces();
-        NetworkInterface ni;
-
-        while (networkList.hasMoreElements()) {
-            ni = networkList.nextElement();
-            if (!ni.getName().equals("enp3s0")) {
-                continue;
-            }
-
-            Enumeration<InetAddress> addresses = ni.getInetAddresses();
-            while (addresses.hasMoreElements()) {
-                ipAddress = addresses.nextElement().getHostAddress();
-                break;
-            }
-
-            if (ipAddress != null)  break;
-        }
+//        Enumeration<NetworkInterface> networkList = NetworkInterface.getNetworkInterfaces();
+//        NetworkInterface ni;
+//
+//        while (networkList.hasMoreElements()) {
+//            ni = networkList.nextElement();
+//            if (!ni.getName().equals("enp3s0")) {
+//                continue;
+//            }
+//
+//            Enumeration<InetAddress> addresses = ni.getInetAddresses();
+//            while (addresses.hasMoreElements()) {
+//                ipAddress = addresses.nextElement().getHostAddress();
+//                break;
+//            }
+//
+//            if (ipAddress != null)  break;
+//        }
+        InetAddress localhost = InetAddress.getLocalHost();
+        ipAddress = (localhost.getHostAddress()).trim();         
 
         return ipAddress;
     }
